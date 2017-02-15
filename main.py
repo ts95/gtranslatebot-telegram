@@ -44,9 +44,21 @@ def langcode_to_name(langcode):
         raise Exception("This langcode is invalid.")
     return names[0]['name']
 
-@bot.message_handler(commands=['start', 'help'])
+@bot.message_handler(commands=['help'])
+def send_start(message):
+    bot.reply_to(message, "Google Translate Bot started. Use /help for help.")
+
+@bot.message_handler(commands=['help'])
 def send_help(message):
-    bot.reply_to(message, "Google Translate Bot for Telegram")
+    help_message = """
+    Reply to a message with */translate* or *translate this* to translate it.
+    Reply to a message with e.g. *en -> fr* to translate it into French from English and so on.
+    Reply to a message with *detect lang* or *detect language* to detect the language of the message.
+
+    Write e.g. *en -> fr: text here* to translate "text here" into French from English and so on.
+    Write */translate text here* to translate "text here" into English (the language will be detected automatically).
+    """
+    bot.reply_to(message, help_message, parse_mode='markdown')
 
 @bot.message_handler(regexp=r'^\/translate (.+)')
 def send_translation_with_arg(message):
@@ -61,7 +73,7 @@ def send_translation_with_arg(message):
     except Exception as e:
         report_error(message, e)
 
-@bot.message_handler(commands=['translate', 'trans'])
+@bot.message_handler(commands=['translate'])
 @bot.message_handler(regexp=r'^translate this$')
 def send_translation(message):
     if not reply_message_has_text(message):
