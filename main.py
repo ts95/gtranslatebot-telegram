@@ -51,22 +51,20 @@ def send_start(message):
 @bot.message_handler(commands=['help'])
 def send_help(message):
     lines = [
-        "Google Translate Bot",
-        "\n",
         "Reply to a message with */translate* or *translate this* to translate it.",
         "Reply to a message with e.g. *en -> fr* to translate it into French from English and so on.",
         "Reply to a message with *detect lang* or *detect language* to detect the language of the message.",
-        "\n",
+        "",
         "Write e.g. *en -> fr: _text here_* to translate _text here_ into French from English and so on.",
         "Write */translate _text here_* to translate _text here_ into English (the language will be detected automatically).",
-        "\n",
+        "",
         "Tip: *to* can be used as a substitute for *->*, since it's easier to type on mobile devices.",
     ]
     help_message = '\n'.join(lines)
     bot.reply_to(message, help_message, parse_mode='markdown')
 
 @bot.message_handler(regexp=r'^\/translate (.+)')
-def send_translation_with_arg(message):
+def send_translation_with_arg(message):$
     m = re.match(r'^\/translate (?P<text>.+)', message.text)
     text = m.group('text')
 
