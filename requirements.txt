@@ -1,0 +1,16 @@
+appdirs==1.4.0
+google-auth==0.6.0
+google-auth-httplib2==0.0.2
+google-cloud-core==0.22.1
+google-cloud-translate==0.22.0
+googleapis-common-protos==1.5.2
+httplib2==0.10.3
+packaging==16.8
+protobuf==3.2.0
+pyasn1==0.2.2
+pyasn1-modules==0.0.8
+pyparsing==2.1.10
+pyTelegramBotAPI==2.3.0
+requests==2.13.0
+rsa==3.4.2
+six==1.10.0
