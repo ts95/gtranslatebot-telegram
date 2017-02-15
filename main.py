@@ -64,7 +64,7 @@ def send_help(message):
     bot.reply_to(message, help_message, parse_mode='markdown')
 
 @bot.message_handler(regexp=r'^\/translate (.+)')
-def send_translation_with_arg(message):$
+def send_translation_with_arg(message):
     m = re.match(r'^\/translate (?P<text>.+)', message.text)
     text = m.group('text')
 
