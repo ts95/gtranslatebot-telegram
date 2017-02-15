@@ -14,14 +14,14 @@ from pathlib import Path
 from google.cloud import translate
 
 if not Path('telegram_token').is_file():
-    raise Error("No telegram_token file found.")
+    raise Exception("No telegram_token file found.")
 
 with open('telegram_token') as f:
     global token
     token = f.read().strip()
 
 if not 'GOOGLE_APPLICATION_CREDENTIALS' in os.environ:
-    raise Error("Lacking GOOGLE_APPLICATION_CREDENTIALS env variable.")
+    raise Exception("Lacking GOOGLE_APPLICATION_CREDENTIALS env variable.")
 
 bot = telebot.TeleBot(token)
 client = translate.Client()
@@ -41,7 +41,7 @@ def langcode_to_name(langcode):
     names = list(filter(lambda lang: lang['language'] == langcode,
             client.get_languages()))
     if len(names) == 0:
-        raise Error("This langcode is invalid.")
+        raise Exception("This langcode is invalid.")
     return names[0]['name']
 
 @bot.message_handler(commands=['start', 'help'])
