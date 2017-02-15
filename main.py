@@ -44,7 +44,7 @@ def langcode_to_name(langcode):
         raise Exception("This langcode is invalid.")
     return names[0]['name']
 
-@bot.message_handler(commands=['help'])
+@bot.message_handler(commands=['start'])
 def send_start(message):
     bot.reply_to(message, "Google Translate Bot started. Use /help for help.")
 
