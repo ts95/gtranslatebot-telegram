@@ -50,14 +50,17 @@ def send_start(message):
 
 @bot.message_handler(commands=['help'])
 def send_help(message):
-    help_message = """
-    Reply to a message with */translate* or *translate this* to translate it.
-    Reply to a message with e.g. *en -> fr* to translate it into French from English and so on.
-    Reply to a message with *detect lang* or *detect language* to detect the language of the message.
-
-    Write e.g. *en -> fr: text here* to translate "text here" into French from English and so on.
-    Write */translate text here* to translate "text here" into English (the language will be detected automatically).
-    """
+    lines = [
+        "Reply to a message with */translate* or *translate this* to translate it.",
+        "Reply to a message with e.g. *en -> fr* to translate it into French from English and so on.",
+        "Reply to a message with *detect lang* or *detect language* to detect the language of the message.",
+        "\n",
+        "Write e.g. *en -> fr: text here* to translate \"text here\" into French from English and so on.",
+        "Write */translate text here* to translate \"text here\" into English (the language will be detected automatically).",
+        "\n",
+        "Tip: \"to\" can be used as a substitute for \"->\", since it's easier to type on mobile devices.",
+    ]
+    help_message = '\n'.join(lines)
     bot.reply_to(message, help_message, parse_mode='markdown')
 
 @bot.message_handler(regexp=r'^\/translate (.+)')
@@ -89,14 +92,14 @@ def send_translation(message):
     except Exception as e:
         report_error(message, e)
 
-@bot.message_handler(regexp=r'^\w{2} -> \w{2}$')
+@bot.message_handler(regexp=r'^\w{2} (->|to) \w{2}$')
 def send_custom_translation(message):
     if not reply_message_has_text(message):
         return
 
     reply_message = message.reply_to_message
 
-    m = re.match(r'^(?P<source>\w{2}) -> (?P<target>\w{2})', message.text)
+    m = re.match(r'^(?P<source>\w{2}) (->|to) (?P<target>\w{2})', message.text)
     source = m.group('source')
     target = m.group('target')
 
@@ -109,9 +112,9 @@ def send_custom_translation(message):
     except Exception as e:
         report_error(message, e)
 
-@bot.message_handler(regexp=r'^\w{2} -> \w{2}:\s{1,2}[^$]+')
+@bot.message_handler(regexp=r'^\w{2} (->|to) \w{2}:\s{1,2}[^$]+')
 def send_custom_translation_inline(message):
-    regexp = r'^(?P<source>\w{2}) -> (?P<target>\w{2}):\s{1,2}(?P<text>[^$]+)'
+    regexp = r'^(?P<source>\w{2}) (->|to) (?P<target>\w{2}):\s{1,2}(?P<text>[^$]+)'
     m = re.match(regexp, message.text)
     source = m.group('source')
     target = m.group('target')
