@@ -17,6 +17,6 @@ Run `virtualenv -p python3 venv && source venv/bin/activate && pip install -r re
 After installing new deps, run `pip freeze > requirements.txt`
 
 ## Running
-Run `source venv/bin/activate` to activate the virtualenv.<br>
-Run `python3 main.py` to run the script.
+`source venv/bin/activate` to activate the virtualenv.<br>
+`./main.py` to run the script.
 

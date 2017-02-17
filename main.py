@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!./venv/bin/python3
 #
 # Google Translate Bot for Telegram
 #
