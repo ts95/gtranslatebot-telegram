@@ -20,8 +20,10 @@ with open('telegram_token') as f:
     global token
     token = f.read().strip()
 
-if not 'GOOGLE_APPLICATION_CREDENTIALS' in os.environ:
-    raise Exception("Lacking GOOGLE_APPLICATION_CREDENTIALS env variable.")
+if not Path('google_app_credentials.json').is_file():
+    raise Exception("No google_app_credentials.json file found.")
+
+os.putenv('GOOGLE_APPLICATION_CREDENTIALS', 'google_app_credentials.json')
 
 bot = telebot.TeleBot(token)
 client = translate.Client()

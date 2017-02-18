@@ -5,10 +5,11 @@ A Google Translate bot for Telegram
 Python 3.6
 
 ## Configuration
-Firstly, create a `telegram_token` file with the token for the bot.
+Firstly, create a `telegram_token` file with the token for the bot in
+the directory of this README-file.
 Secondly, acquire a google service account key, download the
-accompanying JSON-file, and create a `GOOGLE_APPLICATION_CREDENTIALS`
-environment variable that points to the location of said JSON-file.
+accompanying JSON-file, put it in the directory of this README-file,
+and rename it to `google_app_credentials.json`.
 
 ### Setting up a virtualenv and installing deps
 Run `virtualenv -p python3 venv && source venv/bin/activate && pip install -r requirements.txt`
