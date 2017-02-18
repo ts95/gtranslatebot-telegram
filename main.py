@@ -44,8 +44,8 @@ def report_error(message, error):
     bot.reply_to(message, error_msg)
 
 def langcode_to_name(langcode):
-    names = list(filter(lambda lang: lang['language'] == langcode,
-            client.get_languages()))
+    langs = client.get_languages()
+    names = list(filter(lambda lang: lang['language'] == langcode, langs))
     if len(names) == 0:
         raise Exception("This langcode is invalid.")
     return names[0]['name']
@@ -61,8 +61,8 @@ def send_help(message):
         "Reply to a message with e.g. *en -> fr* to translate it into French from English and so on.",
         "Reply to a message with *detect lang* or *detect language* to detect the language of the message.",
         "",
-        "Write e.g. *en -> fr: _text here_* to translate _text here_ into French from English and so on.",
-        "Write */translate _text here_* to translate _text here_ into English (the language will be detected automatically).",
+        "Write e.g. *en -> fr: text here* to translate _text here_ into French from English and so on.",
+        "Write */translate text here* to translate _text here_ into English (the language will be detected automatically).",
         "",
         "Tip: *to* can be used as a substitute for *->*, since it's easier to type on mobile devices.",
     ]
@@ -98,14 +98,14 @@ def send_translation(message):
     except Exception as e:
         report_error(message, e)
 
-@bot.message_handler(regexp=r'^\w{2} (->|to) \w{2}$')
+@bot.message_handler(regexp=r'^\w{2,3}(-\w{2})? (->|to) \w{2,3}(-\w{2})?$')
 def send_custom_translation(message):
     if not reply_message_has_text(message):
         return
 
     reply_message = message.reply_to_message
 
-    m = re.match(r'^(?P<source>\w{2}) (->|to) (?P<target>\w{2})', message.text)
+    m = re.match(r'^(?P<source>\w{2,3}(-\w{2})?) (->|to) (?P<target>\w{2,3}(-\w{2})?)', message.text)
     source = m.group('source')
     target = m.group('target')
 
@@ -118,9 +118,9 @@ def send_custom_translation(message):
     except Exception as e:
         report_error(message, e)
 
-@bot.message_handler(regexp=r'^\w{2} (->|to) \w{2}:\s{1,2}[^$]+')
+@bot.message_handler(regexp=r'^\w{2,3}(-\w{2})? (->|to) \w{2,3}(-\w{2})?:\s{1,2}[^$]+')
 def send_custom_translation_inline(message):
-    regexp = r'^(?P<source>\w{2}) (->|to) (?P<target>\w{2}):\s{1,2}(?P<text>[^$]+)'
+    regexp = r'^(?P<source>\w{2,3}(-\w{2})?) (->|to) (?P<target>\w{2,3}(-\w{2})?):\s{1,2}(?P<text>[^$]+)'
     m = re.match(regexp, message.text)
     source = m.group('source')
     target = m.group('target')
@@ -144,8 +144,9 @@ def send_detection(message):
 
     try:
         result = client.detect_language(reply_message.text)
-        text = langcode_to_name(result['language']) + ' detected.'
-        bot.reply_to(reply_message, text)
+        name = langcode_to_name(result['language'])
+        text = f"*{name}* detected."
+        bot.reply_to(reply_message, text, parse_mode='markdown')
     except Exception as e:
         report_error(message, e)
 
