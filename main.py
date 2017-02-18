@@ -177,4 +177,3 @@ def send_valid_langcodes(message):
     bot.reply_to(message, text, parse_mode='markdown')
 
 bot.polling(none_stop=True)
-

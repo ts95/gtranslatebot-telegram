@@ -20,4 +20,3 @@ After installing new deps, run `pip freeze > requirements.txt`
 ## Running
 `source venv/bin/activate` to activate the virtualenv.<br>
 `./main.py` to run the script.
-
