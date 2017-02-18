@@ -8,6 +8,7 @@
 import telebot
 import logging
 import json
+import html
 import sys
 import re
 import os
@@ -90,7 +91,7 @@ def send_translation_with_arg(message):
         result = client.translate(text)
         log.info(result)
         translated_text = result['translatedText']
-        bot.reply_to(message, translated_text)
+        bot.reply_to(message, html.unescape(translated_text))
     except Exception as e:
         report_error(message, e)
 
@@ -106,7 +107,7 @@ def send_translation(message):
         result = client.translate(reply_message.text)
         log.info(result)
         translated_text = result['translatedText']
-        bot.reply_to(reply_message, translated_text)
+        bot.reply_to(reply_message, html.unescape(translated_text))
     except Exception as e:
         report_error(message, e)
 
@@ -126,7 +127,7 @@ def send_custom_translation(message):
                 target_language=target)
         log.info(result)
         translated_text = result['translatedText']
-        bot.reply_to(reply_message, translated_text)
+        bot.reply_to(reply_message, html.unescape(translated_text))
     except Exception as e:
         report_error(message, e)
 
@@ -143,7 +144,7 @@ def send_custom_translation_inline(message):
                 target_language=target)
         log.info(result)
         translated_text = result['translatedText']
-        bot.reply_to(message, translated_text)
+        bot.reply_to(message, html.unescape(translated_text))
     except Exception as e:
         report_error(message, e)
 
