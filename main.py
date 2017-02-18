@@ -15,6 +15,9 @@ import os
 from pathlib import Path
 from google.cloud import translate
 
+# The name of the bot on Telegram
+BOT_NAME = 'gtranslatebot'
+
 log = logging.getLogger('gtranslatebot.main')
 
 if not Path('telegram_token').is_file():
@@ -58,11 +61,11 @@ def langcode_to_name(langcode):
         raise Exception("This langcode is invalid.")
     return names[0]['name']
 
-@bot.message_handler(commands=['start'])
+@bot.message_handler(regexp=r'^\/start(@'+BOT_NAME+r')?$')
 def send_start(message):
     bot.reply_to(message, "Google Translate Bot started. Use /help for help.")
 
-@bot.message_handler(commands=['help'])
+@bot.message_handler(regexp=r'^\/help(@'+BOT_NAME+r')?$')
 def send_help(message):
     lines = [
         "Reply to a message with */translate* or *translate this* to translate it.",
@@ -78,9 +81,9 @@ def send_help(message):
     help_message = '\n'.join(lines)
     bot.reply_to(message, help_message, parse_mode='markdown')
 
-@bot.message_handler(regexp=r'^\/translate (.+)')
+@bot.message_handler(regexp=r'^\/translate(@'+BOT_NAME+r')? (.+)')
 def send_translation_with_arg(message):
-    m = re.match(r'^\/translate (?P<text>.+)', message.text)
+    m = re.match(r'^\/translate(@\w+)? (?P<text>.+)', message.text)
     text = m.group('text')
 
     try:
@@ -173,7 +176,7 @@ def send_code_for_lang(message):
         text = '\n'.join(map(lambda lang: lang['name'] + ': *' + lang['language'] + '*', finds))
         bot.reply_to(message, text, parse_mode='markdown')
 
-@bot.message_handler(commands=['getvalidlangcodes'])
+@bot.message_handler(regexp=r'^\/getvalidlangcodes(@'+BOT_NAME+r')?$')
 def send_valid_langcodes(message):
     langs = client.get_languages()
     text = '\n'.join(map(lambda lang: lang['name'] + ': *' + lang['language'] + '*', langs))
