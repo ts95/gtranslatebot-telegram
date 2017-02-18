@@ -33,7 +33,13 @@ def reply_message_has_text(message):
             message.reply_to_message.text != None
 
 def report_error(message, error):
-    error_msg = "Error: " + str(error)
+    error_msg = "Error: "
+
+    if "Bad language pair" in str(error):
+        error_msg += "bad language pair. Use /getvalidlangcodes to get a list over valid language codes."
+    else:
+        error_msg += str(error)
+
     print(error_msg)
     bot.reply_to(message, error_msg)
 
@@ -142,6 +148,27 @@ def send_detection(message):
         bot.reply_to(reply_message, text)
     except Exception as e:
         report_error(message, e)
+
+@bot.message_handler(regexp=r'^code for \w+( [\(\)\w]+)?$')
+def send_code_for_lang(message):
+    m = re.match(r'^code for (?P<language>\w+( [\(\)\w]+)?)$', message.text)
+    language = m.group('language')
+
+    langs = client.get_languages()
+    finds = list(filter(lambda lang: language.lower() in lang['name'].lower(), langs))
+
+    if len(finds) == 0:
+        bot.reply_to(message, "You either misspelled the language, or it's unsupported.")
+    else:
+        text = '\n'.join(map(lambda lang: lang['name'] + ': *' + lang['language'] + '*', finds))
+        bot.reply_to(message, text, parse_mode='markdown')
+
+@bot.message_handler(commands=['getvalidlangcodes'])
+def send_valid_langcodes(message):
+    langs = client.get_languages()
+    text = '\n'.join(map(lambda lang: lang['name'] + ': *' + lang['language'] + '*', langs))
+    print(text)
+    bot.reply_to(message, text, parse_mode='markdown')
 
 bot.polling(none_stop=True)
 
