@@ -36,12 +36,14 @@ def report_error(message, error):
     error_msg = "Error: "
 
     if "Bad language pair" in str(error):
-        error_msg += "bad language pair. Use /getvalidlangcodes to get a list over valid language codes."
+        error_msg += "bad language pair."
+    elif "Invalid Value":
+        error_msg += "Invalid language code. Write *code for [language]* to get the language code of a given language."
     else:
         error_msg += str(error)
 
     print(error_msg)
-    bot.reply_to(message, error_msg)
+    bot.reply_to(message, error_msg, parse_mode='markdown')
 
 def langcode_to_name(langcode):
     langs = client.get_languages()
@@ -63,6 +65,7 @@ def send_help(message):
         "",
         "Write e.g. *en -> fr: text here* to translate _text here_ into French from English and so on.",
         "Write */translate text here* to translate _text here_ into English (the language will be detected automatically).",
+        "Write *code for [language]* to get the language code for the language. e.g. *code for English*",
         "",
         "Tip: *to* can be used as a substitute for *->*, since it's easier to type on mobile devices.",
     ]
