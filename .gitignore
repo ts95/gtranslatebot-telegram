@@ -88,5 +88,9 @@ ENV/
 # Rope project settings
 .ropeproject
 
-# tokens
+# VS Code
+.vscode/
+
+# Tokens & credentials
 telegram_token
+google_app_credentials.json
