@@ -6,12 +6,16 @@
 # @date    14.02.2017
 
 import telebot
+import logging
 import json
+import sys
 import re
 import os
 
 from pathlib import Path
 from google.cloud import translate
+
+log = logging.getLogger('gtranslatebot.main')
 
 if not Path('telegram_token').is_file():
     raise Exception("No telegram_token file found.")
@@ -23,12 +27,12 @@ with open('telegram_token') as f:
 if not Path('google_app_credentials.json').is_file():
     raise Exception("No google_app_credentials.json file found.")
 
-os.putenv('GOOGLE_APPLICATION_CREDENTIALS', 'google_app_credentials.json')
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'google_app_credentials.json'
 
 bot = telebot.TeleBot(token)
 client = translate.Client()
 
-print("Running Google Translate Bot...")
+log.info("Running Google Translate Bot")
 
 def reply_message_has_text(message):
     return message.reply_to_message != None and \
@@ -39,12 +43,12 @@ def report_error(message, error):
 
     if "Bad language pair" in str(error):
         error_msg += "bad language pair."
-    elif "Invalid Value":
-        error_msg += "Invalid language code. Write *code for [language]* to get the language code of a given language."
+    elif "Invalid Value" in str(error):
+        error_msg += "invalid language code. Write *code for [language]* to get the language code of a given language."
     else:
-        error_msg += str(error)
+        error_msg += "an unknown error occured."
 
-    print(error_msg)
+    log.error(error_msg)
     bot.reply_to(message, error_msg, parse_mode='markdown')
 
 def langcode_to_name(langcode):
@@ -81,7 +85,7 @@ def send_translation_with_arg(message):
 
     try:
         result = client.translate(text)
-        print(result)
+        log.info(result)
         translated_text = result['translatedText']
         bot.reply_to(message, translated_text)
     except Exception as e:
@@ -97,7 +101,7 @@ def send_translation(message):
 
     try:
         result = client.translate(reply_message.text)
-        print(result)
+        log.info(result)
         translated_text = result['translatedText']
         bot.reply_to(reply_message, translated_text)
     except Exception as e:
@@ -117,7 +121,7 @@ def send_custom_translation(message):
     try:
         result = client.translate(reply_message.text, source_language=source,
                 target_language=target)
-        print(result)
+        log.info(result)
         translated_text = result['translatedText']
         bot.reply_to(reply_message, translated_text)
     except Exception as e:
@@ -134,7 +138,7 @@ def send_custom_translation_inline(message):
     try:
         result = client.translate(text, source_language=source,
                 target_language=target)
-        print(result)
+        log.info(result)
         translated_text = result['translatedText']
         bot.reply_to(message, translated_text)
     except Exception as e:
@@ -173,7 +177,6 @@ def send_code_for_lang(message):
 def send_valid_langcodes(message):
     langs = client.get_languages()
     text = '\n'.join(map(lambda lang: lang['name'] + ': *' + lang['language'] + '*', langs))
-    print(text)
     bot.reply_to(message, text, parse_mode='markdown')
 
 bot.polling(none_stop=True)
