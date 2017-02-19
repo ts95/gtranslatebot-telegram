@@ -5,19 +5,20 @@
 # @author  Toni Sucic
 # @date    14.02.2017
 
+import sys
+
+if sys.version_info < (3, 6):
+    raise Exception("This script requires Python 3.6 or higher.")
+
 import telebot
 import logging
 import json
 import html
-import sys
 import re
 import os
 
 from pathlib import Path
 from google.cloud import translate
-
-if sys.version_info < (3, 6):
-    raise Exception("This script requires Python 3.6 or higher.")
 
 # The name of the bot on Telegram
 BOT_NAME = 'gtranslatebot'
