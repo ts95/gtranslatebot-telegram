@@ -52,7 +52,7 @@ def report_error(message, error):
     else:
         error_msg += "an unknown error occured."
 
-    log.error(error_msg)
+    log.error(str(error))
     bot.reply_to(message, error_msg, parse_mode='markdown')
 
 def langcode_to_name(langcode):
