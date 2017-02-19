@@ -23,19 +23,22 @@ from google.cloud import translate
 # The name of the bot on Telegram
 BOT_NAME = 'gtranslatebot'
 
+telegram_token_file = 'telegram_token'
+google_app_credentials_file = 'google_app_credentials.json'
+
 log = logging.getLogger('gtranslatebot.main')
 
-if not Path('telegram_token').is_file():
-    raise Exception("No telegram_token file found.")
+if not Path(telegram_token_file).is_file():
+    raise Exception(f"No {telegram_token_file} file found.")
 
 with open('telegram_token') as f:
     global token
     token = f.read().strip()
 
-if not Path('google_app_credentials.json').is_file():
-    raise Exception("No google_app_credentials.json file found.")
+if not Path(google_app_credentials_file).is_file():
+    raise Exception(f"No {google_app_credentials_file} file found.")
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'google_app_credentials.json'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = google_app_credentials_file
 
 bot = telebot.TeleBot(token)
 client = translate.Client()
@@ -185,4 +188,6 @@ def send_valid_langcodes(message):
     text = '\n'.join(map(lambda lang: lang['name'] + ': *' + lang['language'] + '*', langs))
     bot.reply_to(message, text, parse_mode='markdown')
 
-bot.polling(none_stop=True)
+
+if __name__ ==  '__main__':
+    bot.polling(none_stop=True)
