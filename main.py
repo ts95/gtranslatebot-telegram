@@ -1,4 +1,4 @@
-#!./venv/bin/python3
+#!/usr/bin/env python3
 #
 # Google Translate Bot for Telegram
 #
@@ -15,6 +15,9 @@ import os
 
 from pathlib import Path
 from google.cloud import translate
+
+if sys.version_info < (3, 6):
+    raise Exception("This script requires Python 3.6 or higher.")
 
 # The name of the bot on Telegram
 BOT_NAME = 'gtranslatebot'
@@ -123,8 +126,7 @@ def send_custom_translation(message):
     target = m.group('target')
 
     try:
-        result = client.translate(reply_message.text, source_language=source,
-                target_language=target)
+        result = client.translate(reply_message.text, source_language=source, target_language=target)
         log.info(result)
         translated_text = result['translatedText']
         bot.reply_to(reply_message, html.unescape(translated_text))
@@ -140,8 +142,7 @@ def send_custom_translation_inline(message):
     text = m.group('text')
 
     try:
-        result = client.translate(text, source_language=source,
-                target_language=target)
+        result = client.translate(text, source_language=source, target_language=target)
         log.info(result)
         translated_text = result['translatedText']
         bot.reply_to(message, html.unescape(translated_text))
