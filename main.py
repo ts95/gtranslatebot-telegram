@@ -52,7 +52,7 @@ custom_translation_inline_pattern = re.compile(
         r'^(?P<source>\w{2,3}(-\w{2})?) (->|to) (?P<target>\w{2,3}(-\w{2})?):\s{1,2}(?P<text>[^$]+)',
         re.IGNORECASE)
 custom_translation_pattern = re.compile(
-        r'^(?P<source>\w{2,3}(-\w{2})?) (->|to) (?P<target>\w{2,3}(-\w{2})?)',
+        r'^(?P<source>\w{2,3}(-\w{2})?) (->|to) (?P<target>\w{2,3}(-\w{2})?)$',
         re.IGNORECASE)
 detect_lang_pattern = re.compile(r'^detect lang(uage)?$', re.IGNORECASE)
 code_for_lang_pattern = re.compile(r'^code for (?P<language>\w+( [\(\)\w]+)?)$', re.IGNORECASE)
