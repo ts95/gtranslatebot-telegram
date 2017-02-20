@@ -50,16 +50,17 @@ def reply_message_has_text(message):
             message.reply_to_message.text != None
 
 def report_error(message, error):
+    error_str = str(error)
     error_msg = "Error: "
 
-    if "Bad language pair" in str(error):
+    if "Bad language pair" in error_str:
         error_msg += "bad language pair."
-    elif "Invalid Value" in str(error):
+    elif "Invalid Value" in error_str:
         error_msg += "invalid language code. Write *code for [language]* to get the language code of a given language."
     else:
         error_msg += "an unknown error occured."
 
-    log.error(str(error))
+    log.error(error_str)
     bot.reply_to(message, error_msg, parse_mode='markdown')
 
 def langcode_to_name(langcode):
