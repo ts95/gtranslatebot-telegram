@@ -18,6 +18,7 @@ import re
 import os
 
 from pathlib import Path
+from telebot import types
 from google.cloud import translate
 
 # The name of the bot on Telegram
@@ -80,7 +81,9 @@ def report_error(message, error):
         error_msg += "an unknown error occured."
 
     log.error(error_str)
-    bot.reply_to(message, error_msg, parse_mode='markdown')
+
+    if message != None:
+        bot.reply_to(message, error_msg, parse_mode='markdown')
 
 def langcode_to_name(langcode):
     langs = client.get_languages()
@@ -117,8 +120,8 @@ def send_translation_with_arg(message):
     try:
         result = client.translate(text)
         log.info(result)
-        translated_text = result['translatedText']
-        bot.reply_to(message, html.unescape(translated_text))
+        translated_text = html.unescape(result['translatedText'])
+        bot.reply_to(message, translated_text)
     except Exception as e:
         report_error(message, e)
 
@@ -133,8 +136,8 @@ def send_translation(message):
     try:
         result = client.translate(reply_message.text)
         log.info(result)
-        translated_text = result['translatedText']
-        bot.reply_to(reply_message, html.unescape(translated_text))
+        translated_text = html.unescape(result['translatedText'])
+        bot.reply_to(reply_message, translated_text)
     except Exception as e:
         report_error(message, e)
 
@@ -148,8 +151,8 @@ def send_custom_translation_inline(message):
     try:
         result = client.translate(text, source_language=source, target_language=target)
         log.info(result)
-        translated_text = result['translatedText']
-        bot.reply_to(message, html.unescape(translated_text))
+        translated_text = html.unescape(result['translatedText'])
+        bot.reply_to(message, translated_text)
     except Exception as e:
         report_error(message, e)
 
@@ -167,8 +170,8 @@ def send_custom_translation(message):
     try:
         result = client.translate(reply_message.text, source_language=source, target_language=target)
         log.info(result)
-        translated_text = result['translatedText']
-        bot.reply_to(reply_message, html.unescape(translated_text))
+        translated_text = html.unescape(result['translatedText'])
+        bot.reply_to(reply_message, translated_text)
     except Exception as e:
         report_error(message, e)
 
@@ -209,6 +212,33 @@ def send_valid_langcodes(message):
         langs = client.get_languages()
         text = '\n'.join(map(lambda lang: f"{lang['name']}: *{lang['language']}*", langs))
         bot.reply_to(message, text, parse_mode='markdown')
+
+
+## Inline handlers
+
+@bot.inline_handler(lambda query: custom_translation_inline_pattern.search(query.query) != None)
+def inline_custom_translation(inline_query):
+    m = re.match(custom_translation_inline_pattern, inline_query.query)
+    source = m.group('source')
+    target = m.group('target')
+    text = m.group('text')
+
+    source_name = langcode_to_name(source)
+    target_name = langcode_to_name(target)
+
+    try:
+        result = client.translate(text, source_language=source, target_language=target)
+        log.info(result)
+        translated_text = html.unescape(result['translatedText'])
+        content = f"{source_name}: {text}\n{target_name}: {translated_text}"
+        r = types.InlineQueryResultArticle(
+                '1',
+                f"{source_name} → {target_name}",
+                types.InputTextMessageContent(content),
+                description=translated_text)
+        bot.answer_inline_query(inline_query.id, [r])
+    except Exception as e:
+        report_error(None, e)
 
 
 if __name__ ==  '__main__':
